@@ -1,0 +1,37 @@
+name: CI - Matrix build with artifacts
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14, 16, 18]  # तीन parallel versions
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: matrix-81c50ba
+        run: echo "Building for Node version ${{ matrix.node-version }}"
+
+      - name: Generate build artifact
+        run: |
+          echo "Build output for Node ${{ matrix.node-version }}" > output.txt
+          echo "Variant: ${{ matrix.node-version }}" >> output.txt
+          echo "Timestamp: $(date)" >> output.txt
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-81c50ba-v${{ matrix.node-version }}
+          path: output.txt
